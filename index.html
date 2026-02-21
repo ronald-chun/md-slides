@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD Slides</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css" id="reveal-theme">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/monokai.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app" :class="{ 'is-dragging': isDragging }">
+        <div class="editor-side" :class="{ collapsed: isCollapsed }" :style="{ width: editorWidth + 'px' }">
+            <div class="side-toggle" @click="isCollapsed = !isCollapsed">{{ isCollapsed ? '»' : '«' }}</div>
+            <div class="editor-content" v-show="!isCollapsed">
+                <div class="editor-header">
+                    <span>MD SLIDES</span>
+                    <button @click="exportHtml" style="background: #27ae60">Export Standalone</button>
+                </div>
+                <div class="tabs">
+                    <div class="tab" :class="{ active: activeTab === 'edit' }" @click="activeTab = 'edit'">Editor</div>
+                    <div class="tab" :class="{ active: activeTab === 'help' }" @click="activeTab = 'help'">說明 (Help)</div>
+                </div>
+                <div class="view-container">
+                    <template v-if="activeTab === 'edit'">
+                        <div class="toolbar">
+                            <select v-model="selectedTheme" @change="updateTheme">
+                                <option v-for="t in themes" :key="t" :value="t">{{ t.toUpperCase() }} Theme</option>
+                            </select>
+                            <button @click="resetContent" style="background: #e74c3c">Reset Content</button>
+                        </div>
+                        <textarea v-model="markdownInput" spellcheck="false" @click="syncSlideOnCursor" @keyup="syncSlideOnCursor"></textarea>
+                    </template>
+                    <div v-else class="help-panel">
+                        <h2>Markdown 語法指南</h2>
+                        <h3>1. 分頁 (Slides)</h3>
+                        <p>橫向分頁：使用 <code>---</code> | 垂直分頁：使用 <code>--v--</code></p>
+                        <h3>2. 逐步顯示 (Fragments)</h3>
+                        <pre>&lt;!-- .element: class="fragment" --&gt;</pre>
+                        <h3>3. 代碼高亮 (Code)</h3>
+                        <pre>```javascript\nconst mdslides = "reliable";\n```</pre>
+                        <h3>4. 數學公式 (LaTeX)</h3>
+                        <p><code>$E=mc^2$</code></p>
+                        <h3>5. 背景設定</h3>
+                        <p><code>&lt;!-- .slide: data-background="#3498db" --&gt;</code></p>
+                        <h3>6. 講者備註 (Speaker Notes)</h3>
+                        <pre>Note: 呢段嘢得你自己見到 (撳 S 開啟)</pre>
+                        <h3>7. 快捷鍵</h3>
+                        <ul>
+                            <li><code>F</code>: 全螢幕 | <code>O</code>: 概覽 (字母 O) | <code>S</code>: 講者檢視 | <code>B</code>: 黑屏暫停</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="status-bar">
+                    <span>{{ isSyncing ? '🔄 Syncing' : '✅ Saved' }}</span>
+                    <span>Slides: {{ slideCount }}</span>
+                </div>
+            </div>
+            <div class="resizer" :class="{ dragging: isDragging }" @mousedown="startDragging" v-show="!isCollapsed"></div>
+        </div>
+        <div class="preview-side">
+            <div class="reveal-container" v-if="renderReveal">
+                <div class="reveal" ref="revealRef">
+                    <div class="slides" v-html="slidesHtml"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/math/math.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/notes/notes.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
