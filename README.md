@@ -10,6 +10,9 @@
 - **多種主題**: 支援 Reveal.js 多款經典主題。
 - **導出 HTML**: 一撳即刻下載 Standalone 嘅 HTML 簡報檔案。
 
+---
+*Last updated by Javis with Fine-grained Token.*
+
 ## 如何使用
 1. 直接開 `index.html`。
 2. 喺左邊編輯器輸入 Markdown。
